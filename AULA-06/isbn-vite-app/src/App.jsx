@@ -19,13 +19,15 @@ function App() {
 
     try {
       const response = await fetch(`https://brasilapi.com.br/api/isbn/v1/${isbnLimpo}`);
-      if (!response.ok) {
-        throw new Error('Livro não encontrado. Verifique o ISBN.');
-      }
       const data = await response.json();
-      setLivro(data);
+
+      if (data?.title) {
+        setLivro(data);
+      } else {
+        setErro('Livro não encontrado. Verifique o ISBN.');
+      }
     } catch (err) {
-      setErro(err.message);
+      setErro('Erro ao conectar à API. Tente novamente mais tarde.');
     }
   };
 
@@ -45,10 +47,10 @@ function App() {
       {livro && (
         <div className="livro-info">
           <h2>{livro.title}</h2>
-          <p><strong>Autor(es):</strong> {livro.authors.join(', ')}</p>
-          <p><strong>Editora:</strong> {livro.publisher}</p>
-          <p><strong>Idioma:</strong> {livro.language}</p>
-          <p><strong>Ano de Publicação:</strong> {livro.published}</p>
+          <p><strong>Autor(es):</strong> {livro.authors?.join(', ') || 'Desconhecido'}</p>
+          <p><strong>Editora:</strong> {livro.publisher || 'Desconhecida'}</p>
+          <p><strong>Idioma:</strong> {livro.language || 'Não informado'}</p>
+          <p><strong>Ano de Publicação:</strong> {livro.published || 'Desconhecido'}</p>
         </div>
       )}
     </div>
